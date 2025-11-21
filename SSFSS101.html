@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SSFSS</title>
+  <style>
+   body {
+  font-family: Arial, sans-serif;
+  background: #000;
+  color: #fff; /* default text color white */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* Neon Quiz Container */
+#quiz-container {
+  background: rgba(20, 20, 28, 0.96); /* subtle dark overlay */
+  color: #fff;
+  width: 92vw;
+  max-width: 440px;
+  min-height: 330px;
+  max-height: 98vh;
+  padding: 26px 15px 28px 15px;
+  border-radius: 26px;
+  text-align: center;
+  position: relative;
+  z-index: 1500;
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 5px solid #53e3fb;
+  box-shadow:
+    0 0 14px #53e3fb,
+    0 0 34px #53e3fb80,
+    0 0 70px #53e3fb75;
+}
+
+/* Neon glow for the quiz border */
+#quiz-container {
+  border: 5px solid #53e3fb;
+  box-shadow:
+    0 0 22px 4px #53e3fb,
+    0 0 34px 7px #53e3fb50,
+    0 0 70px 23px #1b495a40;
+}
+
+/* Question text */
+#question {
+  color: #fff;
+  font-size: 1.6rem;
+  margin-bottom: 2.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Option buttons: white text, dark bg, neon border */
+#options button {
+  background: #121828;
+  border: 2.5px solid #53e3fb;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 1.3rem;
+  margin: 16px 0;
+  padding: 16px 0;
+  width: 95%;
+  font-weight: 600;
+  box-shadow: 0 0 8px #53e3fb60;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.17s;
+}
+#options button:hover,
+#options button:focus {
+  background: #0fd6ff20;
+  color: #53e3fb;
+  box-shadow: 0 0 24px 4px #53e3fbcc;
+  outline: none;
+  transform: scale(1.03);
+}
+
+/* Neon spinning corner images */
+.corner-spin {
+  position: fixed;
+  width: 38vw;
+  height: 38vw;
+  min-width: 160px;
+  min-height: 160px;
+  max-width: 250px;
+  max-height: 250px;
+  animation: spin 4.7s linear infinite;
+  opacity: 0.8;
+  z-index: 900;
+  filter: drop-shadow(0 0 26px #53e3fb) drop-shadow(0 0 18px #53e3fb70);
+}
+
+/* Adjust their position as before */
+.top-left { top: 55px; left: 55px; }
+.top-right { top: 55px; right: 55px; }
+.bottom-left { bottom: 55px; left: 55px; }
+.bottom-right { bottom: 55px; right: 55px; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* POPUP: dark glassy, white text, neon */
+#media-popup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.88);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 0;
+  box-sizing: border-box;
+}
+#media-popup.show { display: flex; }
+#media-content {
+  background: rgba(24, 24, 38, 0.97);
+  color: #fff;
+  padding: 28px 5vw 30px 5vw;
+  border-radius: 24px;
+  max-width: 96vw;
+  max-height: 90vh;
+  width: 94vw;
+  border: 4px solid #53e3fb;
+  box-shadow: 0 0 20px #53e3fb, 0 0 60px #53e3fb70;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+#popup-top-text {
+  margin-bottom: 28px;
+  font-weight: 900;
+  color: #53e3fb;
+  font-size: 2.1rem;
+  line-height: 1.16;
+  text-shadow: 0 4px 22px #53e3fb;
+}
+#popup-bottom-text {
+  margin-top: 24px;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 600;
+  word-break: break-word;
+  text-shadow: 0 2px 14px #53e3fb80;
+}
+#popup-next-button {
+  margin-top: 32px;
+  padding: 22px 44px;
+  background: #53e3fb;
+  color: #121828;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 2rem;
+  font-weight: 900;
+  user-select: none;
+  box-shadow: 0 0 18px #53e3fb, 0 0 38px #53e3fb61;
+  transition: background 0.18s, transform 0.10s;
+}
+#popup-next-button:hover,
+#popup-next-button:focus {
+  background: #fff;
+  color: #0dbedf;
+  outline: none;
+  transform: scale(1.06);
+}
+
+/* Media items in the popup */
+#media-content img, #media-content video {
+  background: #000;
+  border-radius: 14px;
+  max-width: 94vw;
+  max-height: 50vh;
+  margin: 0 auto;
+  box-shadow: 0 0 18px #53e3fb50;
+}
+
+/* Ultra small screens */
+@media (max-width: 370px) {
+  #quiz-container { width: 98vw; min-height: 60vw; padding: 13px 3vw; }
+  #question { font-size: 1.13rem; }
+  #options button { font-size: 0.99rem; padding: 10px 0; }
+  .corner-spin {
+    min-width: 70px; min-height: 70px; max-width: 88px; max-height: 88px;
+    top: 5vw !important; left: 5vw !important; right: 5vw !important; bottom: 5vw !important;
+  }
+  #popup-top-text { font-size: 1.3rem; }
+  #popup-bottom-text { font-size: 1.02rem; }
+  #popup-next-button { font-size: 1.07rem; padding: 10px 11vw; }
+  #media-content { padding: 13px 4vw; max-width: 99vw; max-height: 93vh; border-radius: 9px; }
+}
+
+
+  </style>
+</head>
+<body>
+  <body>
+  <!-- Four spinning images -->
+  <img src="304b9d07380ed043da0a33212d7666aa.jpg" class="corner-spin top-left" alt="Spin TL" />
+  <img src="cacd4187826460a108b7e620b4ebb22b.jpg" class="corner-spin top-right" alt="Spin TR" />
+  <img src="122505ea7b7481a5fd1f36251349a4dd.jpg" class="corner-spin bottom-left" alt="Spin BL" />
+  <img src="6ce22041469662da5b102c1cf78f79c7.jpg" class="corner-spin bottom-right" alt="Spin BR" />
+
+  <div id="quiz-container">
+    <h2 id="question"></h2>
+    <div id="options"></div>
+  </div>
+
+  <div id="media-popup">
+    <div id="media-content">
+      <div id="popup-top-text">Look at this!</div>
+      <!-- Media dynamically inserted here -->
+      <div id="popup-bottom-text">Click Next to continue.</div>
+      <button id="popup-next-button">Next</button>
+    </div>
+  </div>
+
+<script>
+   const questions = {
+  q1: {
+    question: "Are You Into K-pop ?",
+    options: [
+      {
+        text: "Yes",
+        next: "q2",
+        media: { type: "image", src: "266fcdfadc46f7405cd428150d677d3a.jpg" },
+        popupTop: "See I knew It!",
+        popupBottom: "Click Next to continue."
+      },
+      {
+        text: "No",
+        next: "q3",
+        media: { type: "image", src: "58834dd24725af81bc94cc9e3cd9630c.jpg" },
+        popupTop: "Alright",
+        popupBottom: "Wrong Assumption!"
+      }
+    ]
+  },
+  q2: {
+    question: "Which K-pop group do you prefer ?",
+    options: [
+      {
+        text: "BTS",
+        next: "q3",
+        media: { type: "image", src: "aa0351007bcf91ba04dde00853dd6d82.jpg" },
+        popupTop: "Huh! That was unexpected.",
+        popupBottom: "I thought it was Stray Kids."
+      },
+      {
+        text: "EXO",
+        next: "q3",
+        media: { type: "image", src: "aa0351007bcf91ba04dde00853dd6d82.jpg", },
+        popupTop: "Huh! That was unexpected.",
+        popupBottom: "I thought it was Stray Kids."
+      },
+      {
+        text: "Stray Kids",
+        next: "q3",
+        media: { type: "image", src: "fd8b38ca9750a72d865d2029286facd3.jpg", audio: "stray_kids_hollow.mp3" },
+        popupTop: "Is this you?",
+        popupBottom: "Just guessing stuff (no stalking maybe)"
+      },
+      {
+        text: "TWICE",
+        next: "q3",
+        media: { type: "image", src: "aa0351007bcf91ba04dde00853dd6d82.jpg", },
+        popupTop: "Huh! That was unexpected.",
+        popupBottom: "I thought it was Stray Kids."
+      }
+    ]
+  },
+  q3: {
+    question: "Your reason to watch Formula 1 ?",
+    options: [
+      {
+        text: "Its Fun",
+        next: "q4",
+        media: { type: "image", src: "9b1351528ce1da5fe546c991aa3df121.jpg" },
+        popupTop: "Not Charles???",
+        popupBottom: "See now he is sad."
+      },
+      {
+        text: "The Sport Itself",
+        next: "q4",
+        media: { type: "image", src: "9b1351528ce1da5fe546c991aa3df121.jpg", audio: "purr.mp3" },
+        popupTop: "Not Charles???",
+        popupBottom: "See now he is sad."
+      },
+      {
+        text: "Charles Leclerc",
+        next: "q4",
+        media: { type: "image", src: "85f98caaff8e28cca1f9843f5f96f11b.jpg" },
+        popupTop: "Hey I think...",
+        popupBottom: "I kind of see why."
+      },
+      {
+        text: "Dont Watch it",
+        next: "q4",
+        media: { type: "image", src: "e4b9c0150edb0bf9d95b4ff7bc84b523.jpg" },
+        popupTop: "Poor Charles",
+        popupBottom: "See now he is even more sad."
+      }
+
+    ]
+  },
+  q4: {
+    question: "Anyhow who is your favourite ?",
+    options: [
+      {
+        text: "Max Verstappen",
+        next: "q5",
+        media: { type: "video", src: "YTDown.com_Shorts_Hold-on-ladies-motorsport-edit-edits-fyp_Media_78nxknxBxQ0_002_720p.mp4" },
+        popupTop: "See we all love Max :)",
+        popupBottom: "He is majestic ;)"
+      },
+      {
+        text: "Carlos Sainz",
+        next: "q5",
+        media: { type: "video", src: "YTDown.com_Shorts_Carlos-s-us-in-our-exams-era-f1-formula1_Media_wu1Kourcc2Q_002_720p.mp4" },
+        popupTop: "Smoooothhh Operatorrrr...",
+        popupBottom: "Me Core :)"
+      },
+      {
+        text: "Charles Leclerc",
+        next: "q5",
+        media: { type: "video", src: "YTDown.com_Shorts_Poor-Charles-joking-formula1-f1-f1shorts_Media_VwYs-hMoO9Y_001_720p.mp4" },
+        popupTop: "Hmm...",
+        popupBottom: "Me too Charles me too :("
+      },
+      {
+        text: "Me",
+        next: "q5",
+        media: { type: "image", src: "94e0a24badfb478761308f835cdbc38d.jpg" },
+        popupTop: "Hehe! Got me blushing :)",
+        popupBottom: "But I am not a driver (can be if you want me to be ;)"
+      }
+
+    ]
+  },
+  q5: {
+    question: "Hey! Do you know Banana Leclerc ?",
+    options: [
+      {
+        text: "Yes",
+        next: "q6",
+        media: { type: "video", src: "YTDown.com_Shorts_Banana-leclerc-shorts-f1_Media_kRBBkt2u2TE_001_1080p.mp4" },
+        popupTop: "Yeah its this guy...",
+        popupBottom: "Banana Leclerc!!!!."
+      },
+      {
+        text: "No",
+        next: "q6",
+        media: { type: "video", src: "YTDown.com_Shorts_Banana-leclerc-shorts-f1_Media_kRBBkt2u2TE_001_1080p.mp4" },
+        popupTop: "If you are wondering who he is...",
+        popupBottom: "Banana Leclerc!!!!."
+      }
+    ]
+  },
+  q6: {
+    question: "If you are given a chance to travel anywhere, where would you go ?",
+    options: [
+      {
+        text: "America",
+        next: "q7",
+        media: { type: "video", src: "YTDown.com_Shorts_Media_toH_m08xhN0_002_720p.mp4" },
+        popupTop: "Ohh to live in America!...",
+        popupBottom: "One should take *someone* along cuz alone is scary :)"
+      },
+      {
+        text: "Japan",
+        next: "q7",
+        media: { type: "video", src: "YTDown.com_Shorts_Japan-vibes-japan-aesthetic-vibes-ulzzan_Media_V0JWBFukn-k_002_720p.mp4" },
+        popupTop: "Wanna visit once atleast.",
+        popupBottom: "You know one shouldn't visit alone taking *someone* along is good :)"
+      },
+      {
+        text: "Eastern Europe",
+        next: "q7",
+        media: { type: "video", src: "YTDown.com_Shorts_snowman-snow-sia_Media_FXFfXjUsoyk_002_720p.mp4" },
+        popupTop: "Oh! The snow and the night",
+        popupBottom: "Hmm the dance can't be done alone so should bring *someone* along :)"
+      },
+      {
+        text: "English Countryside",
+        next: "q7",
+        media: { type: "video", src: "YTDown.com_Shorts_Castle-Combe-England-s-Prettiest-Village_Media_JmK_6ZI-_aE_002_720p.mp4" },
+        popupTop: "Feels like Harry Potter...",
+        popupBottom: "Consider going with *someone* yk if Voldemort came anyhow :)"
+      }
+    ]
+  },
+  q7: {
+    question: "Do you know Aadita Garg?",
+    options: [
+      {
+        text: "Yes",
+        next:"q10",
+        media:{type:"image", src:"c2fbfcf9135f53a90d81838a8f5cdcf3.jpg"},
+        popupTop: "Wait let me ask Pikachu",
+        popupBottom:"Yes, he approved :)"
+      },
+      {
+        text: "No",
+        next:"q8",
+        media:{type:"image", src:"bb9246adfa6a51f2aa60949937d9ac3d.jpg"},
+        popupTop: "Umm...",
+        popupBottom:"What do you mean no :("
+      }
+    ]
+  },
+  q8: {
+    question: "Alright once again. Do you know Aadita Garg?",
+    options: [
+      {
+        text: "Yes",
+        next:"q10",
+        media:{type:"image", src:"c2fbfcf9135f53a90d81838a8f5cdcf3.jpg"},
+        popupTop: "Wait let me ask Pikachu",
+        popupBottom:"Yes, he approved :)"
+      },
+      {
+        text:"No",
+        next:"q9",
+        media:{type:"image",src:"f38cdad0ec8ed9156190ef662de27d2f.jpg"},
+        popupTop:"Ye lo...",
+        popupBottom:"Ab to yes pr click krdo :("
+      }
+    ]
+  },
+  q9: {
+    question:"Once again. Do you know Aadita Garg?",
+    options:[
+      {
+        text:"Yes",
+        next:"q10",
+        media:{type:"image",src:"74319963eacc51f8e5e8eb5576bf75c2.jpg"},
+        popupTop:"Finally!",
+        popupBottom:"You know you lie a lot :)"
+      },
+      {
+         text:"Yes",
+        next:"q10",
+        media:{type:"image",src:"74319963eacc51f8e5e8eb5576bf75c2.jpg"},
+        popupTop:"Finally!",
+        popupBottom:"You know you lie a lot :)"
+      }
+
+    ]
+  },
+  q10: {
+    question:"Is her memory good?",
+    options:[
+      {
+        text:"Yes",
+        next:"q11",
+        media:{type:"image",src:"67c6cc86ba2df352d952a35bea2466b7.jpg"},
+        popupTop:"Alright let me ask Charles",
+        popupBottom:"He said thats good"
+      },
+      {
+        text:"No",
+        next:"q11",
+        media:{type:"image",src:"c4bedf0ef61021d6323e020e18e0a43a.jpg"},
+        popupTop:"Let me ask Pikachu",
+        popupBottom:"He did not approved sorry :("
+      }
+    ]
+  },
+  q11: {
+    question:"Is there a chance she could get 'FAPTO' (Forgetting About a Particular Topic Only)?",
+    options:[
+      {
+        text:"Yes",
+        next:"q14",
+        media:{type:"video",src:"happy happy happy cat original meme.mp4"},
+        popupTop:"Yeeeeeee!!!",
+        popupBottom:"The cat is so me :)"
+      },
+      {
+        text:"No",
+        next:"q12",
+        media:{type:"image",src:"4694cd8222126ae3ea25b1af933f940a.jpg"},
+        popupTop:"I told Max, his reaction was... ",
+        popupBottom:"He said please click yes next time :)"
+      }
+    ]
+  },
+  q12: {
+    question:"Will she (please request)?",
+    options:[
+      {
+        text:"Yes",
+        next:"q14",
+        media:{type:"video",src:"happy happy happy cat original meme.mp4"},
+        popupTop:"Yeeeee!!!",
+        popupBottom:"The cat is so me :)"
+      },
+      {
+        text:"No",
+        next:"q13",
+        media:{type:"video",src:"Sad Meowing Cat Meme Template.mp4"},
+        popupTop:"Let me call someone...",
+        popupBottom:"See she is requesting. Please click 'yes' or she will be sad"
+      }
+    ]
+  },
+  q13: {
+    question:"Once again will she (please request)?",
+    options:[
+      {
+        text:"Yes",
+        next:"q14",
+        media:{type:"video",src:"happy happy happy cat original meme.mp4"},
+        popupTop:"Finally yeeeee!!!",
+        popupBottom:"The cat is so me :)"
+      },
+      {
+        text:"No",
+        next:"q14",
+        media:{type:"image",src:"245211f33164709f4a59f66c135b7721.jpg"},
+        popupTop:"Nope! I am taking that as a Yes (>_<)",
+        popupBottom:"You are very persistent.I might have to change all the options to yes :)"
+      }
+    ]
+  },
+  q14: {
+    question:"Do you think she will be friends with a certain stupid someone?",
+    options:[
+      {
+        text:"Yes",
+        next:"q17",
+        media:{type:"video",src:"The LEGO Batman Movie meme template.mp4"},
+        popupTop:"........",
+        popupBottom:"I am gonna die before this ends goshh!!"
+      },
+      {
+        text:"No",
+        next:"q15",
+        media:{type:"image",src:"a77972df000d1d3d1324d7ad37f332c0.jpg"},
+        popupTop:"Noooooooooooooooooooo!!!!",
+        popupBottom:"Wait lemme cry in the corner first :("
+      }
+    ]
+  },
+  q15: {
+    question:"Please will you convince her?",
+    options:[
+      {
+        text:"Yes",
+        next:"q17",
+        media:{type:"video",src:"The LEGO Batman Movie meme template.mp4"},
+        popupTop:"........",
+        popupBottom:"Gosh!! I am gonna die before this ends."
+      },
+      {
+        text:"No",
+        next:"q16",
+        media:{type:"image",src:"0700a0b58d31ee1e25d487850202d835.jpg"},
+        popupTop:"Why you doing this :(",
+        popupBottom:"The husky said please convince her :("
+      }
+    ]
+  },
+  q16:{
+    question: "Will you convince her please? (Wait its my code so i can...:))",
+    options:[
+      {
+        text:"Yes",
+        next:"q17",
+        media:{type:"video",src:"The LEGO Batman Movie meme template.mp4"},
+        popupTop:"Finally...my reaction....",
+        popupBottom:"I can die in peace now"
+      },
+      {
+        text:"Yes (Haha Checkmate!)",
+        next:"q17",
+        media:{type:"video",src:"The LEGO Batman Movie meme template.mp4"},
+        popupTop:"Finally....my reaction....",
+        popupBottom:"I can die inpeace now"
+      }
+    ]
+  },
+  q17:{
+    question:"Thats about the limit of my Skills so...Did you like it (whatever this is idk) or was I able make you laugh just a tiny bit?",
+    options:[
+      {
+        text:"Yes",
+        next:"end",
+        media:{type:"video",src:"Carlossainzsmoothoperator.mp4"},
+        popupTop:"Hhaha good to hear see I can be a smooth operator...",
+        popupBottom:"Will try to make it more fun next time. Till then please wait :)"
+      },
+      {
+        text:"No",
+        next:"end",
+        media:{type:"video",src:"Charles leclerc,   I AM STUPID   F1 memes.mp4"},
+        popupTop:"Well thats unfortunate...I guess...",
+        popupBottom:"Will try even more next time. I will do it eventually some day just you wait :)"
+      }
+    ]
+  }
+
+};
+
+let current = 'q1';
+
+const questionEl = document.getElementById('question');
+const optionsEl = document.getElementById('options');
+const popup = document.getElementById('media-popup');
+const mediaContent = document.getElementById('media-content');
+const topText = document.getElementById('popup-top-text');
+const bottomText = document.getElementById('popup-bottom-text');
+const nextButton = document.getElementById('popup-next-button');
+
+function showQuestion() {
+  const q = questions[current];
+  questionEl.textContent = q.question;
+  optionsEl.innerHTML = '';
+  q.options.forEach(option => {
+    const btn = document.createElement('button');
+    btn.textContent = option.text;
+
+    btn.onclick = () => {
+      // Add button press effect
+      btn.classList.add('option-press');
+      setTimeout(() => {
+        btn.classList.remove('option-press');
+        // Optional confetti (requires CDN, see CSS section)
+        if(window.confetti) {
+          confetti({
+            particleCount: 50,
+            spread: 85,
+            origin: { y: 0.72 }
+          });
+        }
+        handleOptionClick(option);
+      }, 220);
+    };
+
+    optionsEl.appendChild(btn);
+  });
+}
+
+function clearMedia() {
+  mediaContent.querySelectorAll('img, video, audio').forEach(el => el.remove());
+}
+
+function showMedia(media, onNext, popupTop, popupBottom) {
+  clearMedia();
+  topText.textContent = popupTop || "Look at this!";
+  bottomText.textContent = popupBottom || "Click Next to continue.";
+  nextButton.style.display = 'none';
+
+  if (media.type === 'image') {
+    const img = document.createElement('img');
+    img.src = media.src;
+    mediaContent.insertBefore(img, bottomText);
+    popup.classList.add('show');
+    nextButton.style.display = 'inline-block'; // Show Next button for images right away
+  } else if (media.type === 'video') {
+    const video = document.createElement('video');
+    video.src = media.src;
+    video.autoplay = true;
+    video.controls = false;
+    mediaContent.insertBefore(video, bottomText);
+    popup.classList.add('show');
+    nextButton.style.display = 'none'; // Wait until video ends
+
+    video.onended = () => {
+      nextButton.style.display = 'inline-block';
+    };
+     if (media.audio && audioUnlocked) {
+      const audio = document.createElement('audio');
+      audio.src = media.audio;
+      audio.autoplay = true;
+      audio.volume = 1.0;
+      mediaContent.appendChild(audio);
+
+      audio.play().catch((e) => console.warn('Audio playback problem:', e));
+    }
+  }
+
+  nextButton.onclick = () => {
+    popup.classList.remove('show');
+    onNext();
+  };
+}
+
+function handleOptionClick(option) {
+  const nextStep = option.next;
+  const media = option.media;
+  if (media) {
+    showMedia(
+      media,
+      () => {
+        if (nextStep === 'end') {
+          questionEl.textContent = "Thanks for your time and hope you smilled even just a tiny bit... ";
+          optionsEl.innerHTML = "";
+        } else {
+          current = nextStep;
+          showQuestion();
+        }
+      },
+      option.popupTop,
+      option.popupBottom
+    );
+  } else {
+    if (nextStep === 'end') {
+      questionEl.textContent = "Thanks for playing!";
+      optionsEl.innerHTML = "";
+    } else {
+      current = nextStep;
+      showQuestion();
+    }
+  }
+}
+
+// Start quiz at first question
+showQuestion();
+
+</script>
+
+</body>
+</html>
